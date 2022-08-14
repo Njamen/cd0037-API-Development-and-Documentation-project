@@ -3,8 +3,13 @@ from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
 import json
 
+
+# SQLALCHEMY_DATABASE_URI = 'postgresql://admin:pass_admin@localhost:5432/fyyur_db'
+
 database_name = 'trivia'
-database_path = 'postgresql://{}/{}'.format('localhost:5432', database_name)
+database_path = 'postgresql://postgres:postgres@{}/{}'.format('localhost:5432', database_name)
+# database_path = 'postgresql://{}/{}'.format('localhost:5432', database_name)
+
 
 db = SQLAlchemy()
 
