@@ -63,6 +63,7 @@ class Question(db.Model):
             'difficulty': self.difficulty
             }
 
+  
 """
 Category
 
@@ -81,3 +82,11 @@ class Category(db.Model):
             'id': self.id,
             'type': self.type
             }
+
+    @staticmethod
+    def get_all_formatted() : 
+        categories = Category.query.all() 
+        data =  { '{}'.format(it.id) : it.type    for it in categories }   
+        return data
+
+
