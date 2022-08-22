@@ -4,10 +4,14 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 
 
-# SQLALCHEMY_DATABASE_URI = 'postgresql://admin:pass_admin@localhost:5432/fyyur_db'
 
+db_user = 'postgres'
+db_user_password = 'postgres'
+db_host = 'localhost:5432'
 database_name = 'trivia'
-database_path = 'postgresql://postgres:postgres@{}/{}'.format('localhost:5432', database_name)
+# database_path = 'postgresql://postgres:postgres@{}/{}'.format('localhost:5432', database_name)
+database_path = f'postgresql://{db_user}:{db_user_password}@{db_host}/{database_name}'
+
 # database_path = 'postgresql://{}/{}'.format('localhost:5432', database_name)
 
 
@@ -61,7 +65,7 @@ class Question(db.Model):
             'answer': self.answer,
             'category': self.category,
             'difficulty': self.difficulty
-            }
+        }
 
   
 """
