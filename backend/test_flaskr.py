@@ -34,6 +34,9 @@ class TriviaTestCase(unittest.TestCase):
         self.database_path = f"postgresql://{db_user}:{db_user_password}@{db_host}/{self.database_name}" 
         self.new_question = {"question":"The highest Cameroon mont", "answer":"Mont Cameroon", 
                              "difficulty":5 , "category":1}
+        self.new_bad_question = {"qusestion":"The highest Cameroon mont", "answer":"Mont Cameroon", 
+                             "difficulty":5 , "category":1}
+
 
 
         setup_db(self.app, self.database_path)
@@ -48,8 +51,7 @@ class TriviaTestCase(unittest.TestCase):
     
     def tearDown(self):
         """Executed after reach test"""
-        pass
-
+        pass 
 
     def test_get_categories(self):
         res = self.client().get('/categories')
@@ -57,7 +59,11 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue( "categories" in data )
         self.assertTrue( len(data.get("categories")))
-
+            
+    def test_400_error_get_categories(self):
+        res = self.client().get('/categories/2')
+        data =json.loads(res.data)
+        not_found_404_test_error(self ,res, data)    
 
     def test_get_questions(self): 
         res = self.client().get('/questions')
@@ -74,8 +80,6 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data) 
         not_found_404_test_error(self, res, data)
 
-
-
     def test_get_category_questions(self): 
         res = self.client().get('/categories/1/questions')
         data =json.loads(res.data)  
@@ -83,12 +87,18 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(("questions"  in data) and ("currentCategory"  in data) )
         self.assertTrue( "totalQuestions"  in data )
         self.assertTrue( len(data.get("questions")))
-
+    
+    def test_404_error_get_category_questions(self):
+        res = self.client().post('/categories/1s/questions')
+        data =json.loads(res.data)
+        not_found_404_test_error(self ,res, data)
 
 
     def test_get_quizzes(self): 
-        res = self.client().post('/quizzes' , json={"previous_questions": [20],
-                                                     "quiz_category": 1})
+        res = self.client().post(
+            '/quizzes' , 
+            json={"previous_questions": [20], "quiz_category": 1}
+        )
         data =json.loads(res.data)  
         self.assertEqual(res.status_code, 200)
         self.assertTrue( "question" in data )
@@ -106,6 +116,12 @@ class TriviaTestCase(unittest.TestCase):
         data =json.loads(res.data)  
         self.assertEqual(res.status_code, 200)
 
+        
+    def test_400_error_add_question(self):
+        res = self.client().post('/questions' , json=self.new_bad_question)
+        data =json.loads(res.data)
+        bad_request_400_test_error(self ,res, data)
+
 
     def test_search_question(self): 
         res = self.client().post('/questions' , 
@@ -116,7 +132,11 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue( "questions" in data )
         self.assertTrue( "totalQuestions" in data )
         self.assertTrue( "currentCategory" in data )
-
+    
+    def test_400_error_search_question(self):
+        res = self.client().post('/questions' , json={"searchTerm":""})
+        data =json.loads(res.data)
+        bad_request_400_test_error(self ,res, data)
 
     def test_delete_question(self):
         res = self.client().delete("/questions/2")
