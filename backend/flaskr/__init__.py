@@ -168,10 +168,14 @@ def create_app(test_config=None):
         found_question = query.limit(1).one_or_none()   
 
         if found_question is None :
-            abort(404)
+            next_question = {} 
+        else :
+            next_question = found_question.format()  
+
 
         data = {
-            'question' : found_question.format() 
+            'question' :  next_question 
+
         }
 
 
