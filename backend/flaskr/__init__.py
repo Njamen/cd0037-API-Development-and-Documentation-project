@@ -153,13 +153,17 @@ def create_app(test_config=None):
         previous_questions = body.get('previous_questions',None) 
         category_id = body.get('quiz_category', None) 
 
+
         if previous_questions is None or category_id is None :
             abort(400)
-
-        query = Question.query.filter( and_(
-                            ~Question.id.in_(previous_questions),
-                            Question.category == category_id
-                             ) )
+        
+        if category_id == 0 :
+            query = Question.query.filter(~Question.id.in_(previous_questions))                        
+        else :
+            query = Question.query.filter( and_(
+                                ~Question.id.in_(previous_questions),
+                                Question.category == category_id
+                                ) )
 
         found_question = query.limit(1).one_or_none()   
 
